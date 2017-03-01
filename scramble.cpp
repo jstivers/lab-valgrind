@@ -25,6 +25,7 @@ int main(int argc, char *argv[] ) {
     int numTurns = 10;
     int numWords;
     char buffer[41];
+    char* wordBank[numWords];
 
 
 
@@ -54,12 +55,11 @@ int main(int argc, char *argv[] ) {
     }else{
         file >> numWords;
     }
-    getline( file, line );
 
-    // Now begin your useful code
+    getline( file, line );
     while( file.eof() ) {
-        // This will just over write the first line read
         getline( file, line );
+       strcpy(wordBank,line);
 
     }
 
