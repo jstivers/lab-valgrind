@@ -3,5 +3,5 @@ project(lab_cstrings)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES scramble.cpp memleak.cpp)
+set(SOURCE_FILES scramble.cpp)
 add_executable(lab_cstrings ${SOURCE_FILES})

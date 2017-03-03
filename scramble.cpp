@@ -1,4 +1,4 @@
-// wscramble.cpp
+﻿// wscramble.cpp
 // Word Scramble guessing game
 // Illustrates string library functions, character arrays,
 //  arrays of pointers, etc.
@@ -17,20 +17,20 @@ void permute(char items[], int len);
 
 
 int main(int argc, char *argv[] ) {
-  srand(time(0));
-  char guess[80];
+    srand(time(0));
+    char guess[80];
 
 
     bool wordGuessed = false;
     int numTurns = 10;
     int numWords;
     char buffer[41];
-    char* wordBank[numWords];
-
+    char** wordBank;
 
 
     //checking command line arguments
-    if ( argc != 1){
+    if ( argc != 2){
+        cout<<"\nUser did not provide enough command line arguments.\n";
         return 0;
     }
 
@@ -44,60 +44,73 @@ int main(int argc, char *argv[] ) {
     }
 
 
-  // reading from the file
-    std::fstream input(argv[1]);
-    std::string str;
-    string line;
+    // reading from the file
+    string str;
 
-    if(!(file >> numWords)){
-        cout<<"\nNUMBER OF WORDS WAS NOT DETECTED BY SCRAMBLE.CPP, PROGRAM SHUTTING DOWN\n";
+    if(!(file >> numWords)) {
+        cout << "\nNUMBER OF WORDS WAS NOT DETECTED BY SCRAMBLE.CPP, PROGRAM SHUTTING DOWN\n";
         return 0;
-    }else{
-        file >> numWords;
+    }
+    wordBank = new char*[numWords];
+
+
+    for(int i = 0; i < numWords; i++) {
+        file >> buffer;
+        int wordLen = strlen(buffer);
+        wordBank[i] = new char [wordLen+1];
+        strcpy(wordBank[i],buffer);
+
+
     }
 
-    getline( file, line );
-    while( file.eof() ) {
-        getline( file, line );
-       strcpy(wordBank,line);
 
+
+
+    // Pick a random word from the wordBank
+    int target = rand() % numWords;
+    int targetLen = strlen(wordBank[target]);
+
+    // Make a dynamically-allocated copy of the word and scramble it
+    char* word = new char[targetLen+1];
+    strcpy(word, wordBank[target]);
+    permute(word, targetLen);
+
+    // An individual game continues until a word
+    //  is guessed correctly or 10 turns have elapsed
+    while (!wordGuessed && numTurns > 0) {
+        cout << "Scrambled word: " << word << endl;
+        cout << "What do you guess the original word is? ";
+        cin >> guess;
+        wordGuessed = (strcmp(guess, wordBank[target]) == 0);
+        numTurns--;
+    }
+    if (wordGuessed) {
+        cout << "You win!" << endl;
+    }
+    else {
+        cout << "Too many turns...You lose!" << endl;
     }
 
-  // Pick a random word from the wordBank
-  int target = rand() % numWords;
-  int targetLen = strlen(wordBank[target]);
+    delete [] word;
+    for(int i = 0; i < numWords; i++) {
+        delete[] wordBank[i];
 
-  // Make a dynamically-allocated copy of the word and scramble it
-  char* word = new char[targetLen+1];
-  strcpy(word, wordBank[target]);
-  permute(word, targetLen);
-  
-  // An individual game continues until a word
-  //  is guessed correctly or 10 turns have elapsed
-  while (!wordGuessed && numTurns > 0) {
-    cout << "Scrambled word: " << word << endl;
-    cout << "What do you guess the original word is? ";
-    cin >> guess;
-    wordGuessed = (strcmp(guess, wordBank[target]) == 0);
-    numTurns--;
-  }
-  if (wordGuessed) {
-    cout << "You win!" << endl;
-  }
-  else {
-    cout << "Too many turns...You lose!" << endl;
-  }
-  delete [] word;
-  return 0;
+
+    }
+    delete[] wordBank;
+
+    return 0;
 }
 
 // Scramble the letters. See "Knuth shuffle" on Wikipedia.
 void permute(char items[], int len) {
-  for (int i = len-1; i > 0; --i) {
-    int r = rand() % i;
-    char temp = items[i];
-    items[i] = items[r];
-    items[r] = temp;
-  }
+    for (int i = len-1; i > 0; --i) {
+        int r = rand() % i;
+        char temp = items[i];
+        items[i] = items[r];
+        items[r] = temp;
+    }
 }
+
+
 
